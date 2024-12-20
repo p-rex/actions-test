@@ -25,5 +25,3 @@ RUN mkdir -p ${TMP_DIR}files && \
 #install python for attack demo
 RUN apt install -y python3 python3-distutils python3-pip tree less
 RUN ln -s /usr/bin/python3 /usr/bin/python
-
-LABEL org.opencontainers.image.source=https://github.com/p-rex/actions-test.git
